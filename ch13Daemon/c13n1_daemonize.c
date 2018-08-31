@@ -8,6 +8,7 @@ daemonize(const char *cmd)
 {
 	int					i, fd0, fd1, fd2;
 	pid_t				pid;
+	pid_t _pgid, _pid, _sid, _ppid;
 	struct rlimit		rl;
 	struct sigaction	sa;
 
@@ -29,23 +30,24 @@ daemonize(const char *cmd)
 		err_quit("%s: can't fork", cmd);
 	else if (pid != 0) /* parent */
 		{
-			pid_t _pgid, _pid;
 			_pgid = getpgrp();
-			printf("parent, %s(),line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
+			_ppid = getppid();
+			printf("1st parent, %s(),line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
 			_pid = getpid();
-			printf("parent, %s(),line=%d, _pid=%d\n", __func__, __LINE__, _pid);
+			printf("1st parent, %s(),line=%d, _pid=%d, _ppid=%d\n", __func__, __LINE__, _pid, _ppid);
+			_sid = getsid(0);
+			printf("1st parent %s(),line=%d, _sid=%d\n", __func__, __LINE__, _sid);
 			exit(0);
 		}
 	printf("after 1st fork, first child, returned pid of fork=%d\n", pid);
-	pid_t _pgid, _pid;
 	_pgid = getpgrp();
-	printf("%s(),line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
+	_ppid = getppid();
+	printf("2nd parent, %s(), before setsid(), line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
 	_pid = getpid();
-	printf("%s(),line=%d, _pid=%d\n", __func__, __LINE__, _pid);
+	printf("2nd parent, %s(), before setsid(), line=%d, _pid=%d, _ppid=%d\n", __func__, __LINE__, _pid, _ppid);
+	_sid = getsid(0);
+	printf("2nd parent, %s(), before setsid(),  line=%d, _sid=%d\n", __func__, __LINE__, _sid);
 	setsid();
-	pid_t sid;
-	sid = getsid(0);
-	printf("%s(),line=%d, sid=%d\n", __func__, __LINE__, sid);
 	/*
 	 * Ensure future opens won't allocate controlling TTYs.
 	 */
@@ -57,10 +59,24 @@ daemonize(const char *cmd)
 	if ((pid = fork()) < 0)
 		err_quit("%s: can't fork", cmd);
 	else if (pid != 0) {/* parent */ 
+		_pgid = getpgrp();
+		_ppid = getppid();
+		printf("2nd parent, %s(), after setsid(),line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
+		_pid = getpid();
+		printf("2nd parent, %s(), after setsid(),line=%d, _pid=%d, _ppid=%d\n", __func__, __LINE__, _pid, _ppid);
+		_sid = getsid(0);
+		printf("2nd parent, %s(), after setsid(),line=%d,  _sid=%d\n", __func__, __LINE__, _sid);
 		exit(0);
 		
 		}
 
+	_pgid = getpgrp();
+	_ppid = getppid();
+	printf("2nd child, %s(),line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
+	_pid = getpid();
+	printf("2nd child, %s(),line=%d, _pid=%d, _ppid=%d\n", __func__, __LINE__, _pid, _ppid);
+	_sid = getsid(0);
+	printf("2nd child, %s(),line=%d, _sid=%d\n", __func__, __LINE__, _sid);
 	/*
 	 * Change the current working directory to the root so
 	 * we won't prevent file systems from being unmounted.
@@ -101,6 +117,6 @@ int main(int argc, char **argv)
 	pid = getpid();
 	printf("%s(),line=%d, pid=%d\n", __func__, __LINE__, pid);
 	daemonize("ls");
-	sleep(1);
+	sleep(600);
 	return 0;
 }
