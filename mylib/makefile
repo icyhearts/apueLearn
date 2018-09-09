@@ -6,7 +6,7 @@ C_FLAGS=-g -fPIC -c
 else
 C_FLAGS=-fPIC -c
 endif
-LIB_OBJS=../obj/error.o  ../obj/lockfile.o ../obj/init.o ../obj/single.o ../obj/setfl.o ../obj/clrfl.elf
+LIB_OBJS=../obj/error.o  ../obj/lockfile.o ../obj/init.o ../obj/single.o ../obj/setfl.o ../obj/clrfl.elf ../obj/tellwait.o ../obj/prmask.o ../obj/lockreg.o
 
 ../obj/libapue.so:${LIB_OBJS}
 	${CC} -shared -fPIC $^ -o $@
@@ -21,6 +21,12 @@ LIB_OBJS=../obj/error.o  ../obj/lockfile.o ../obj/init.o ../obj/single.o ../obj/
 ../obj/setfl.o:setfl.c
 	${CC} ${C_FLAGS} $< -o $@
 ../obj/clrfl.elf:clrfl.c
+	${CC} ${C_FLAGS} $< -o $@
+../obj/tellwait.o:tellwait.c
+	${CC} ${C_FLAGS} $< -o $@
+../obj/prmask.o:prmask.c
+	${CC} ${C_FLAGS} $< -o $@
+../obj/lockreg.o:lockreg.c
 	${CC} ${C_FLAGS} $< -o $@
 all:../obj/libapue.so
 	@echo "makeing all"

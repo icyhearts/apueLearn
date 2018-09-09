@@ -13,5 +13,7 @@ BIN=bin
 ##
 ${BIN}/fig8.12RaceCondition.elf:fig8.12RaceCondition.c ${MYLIB_INC_DIR}/apue.h
 	${CC} $<  ${C_FLAGS} ${LINK_FLAGS} -o $@
+${BIN}/fig8.13_tellwait2.elf:fig8.13_tellwait2.c ${MYLIB_INC_DIR}/apue.h
+	${CC} $<  ${C_FLAGS} ${LINK_FLAGS} -o $@
 clean:
 	rm -rf *.elf *.o bin/*.elf
