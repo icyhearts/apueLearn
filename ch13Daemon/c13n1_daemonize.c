@@ -2,7 +2,11 @@
 #include <syslog.h>
 #include <fcntl.h>
 #include <sys/resource.h>
+void hupHandler(int signo)
+{
 
+	printf("in hupHandler\n");
+}
 void
 daemonize(const char *cmd)
 {
@@ -52,6 +56,7 @@ daemonize(const char *cmd)
 	 * Ensure future opens won't allocate controlling TTYs.
 	 */
 	sa.sa_handler = SIG_IGN;
+//	sa.sa_handler = &hupHandler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	if (sigaction(SIGHUP, &sa, NULL) < 0)
@@ -61,7 +66,7 @@ daemonize(const char *cmd)
 	else if (pid != 0) {/* parent */ 
 		_pgid = getpgrp();
 		_ppid = getppid();
-		printf("2nd parent, %s(), after setsid(),line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
+		printf("\n2nd parent, %s(), after setsid(),line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
 		_pid = getpid();
 		printf("2nd parent, %s(), after setsid(),line=%d, _pid=%d, _ppid=%d\n", __func__, __LINE__, _pid, _ppid);
 		_sid = getsid(0);
