@@ -17,6 +17,8 @@ ${BIN}/self2_sighup.elf:self2_sighup.c ${MYLIB_INC_DIR}/apue.h
 	${CC} $<  ${C_FLAGS} ${LINK_FLAGS} -o $@
 ${BIN}/self3_reread.elf:self3_reread.c ${MYLIB_INC_DIR}/apue.h
 	${CC} $<  ${C_FLAGS} ${LINK_FLAGS} -o $@
+${BIN}/self4_testDaemon.elf:self4_testDaemon.c ${MYLIB_INC_DIR}/apue.h
+	${CC} $<  ${C_FLAGS} ${LINK_FLAGS} -o $@
 ${BIN}/c13n1_daemonize.elf:c13n1_daemonize.c ${MYLIB_INC_DIR}/apue.h
 	${CC} $<  ${C_FLAGS} ${LINK_FLAGS} -o $@
 ${BIN}/c13n2_fig13.7_rereade.elf:c13n2_fig13.7_rereade.c ${MYLIB_INC_DIR}/apue.h

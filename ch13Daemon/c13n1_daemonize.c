@@ -12,7 +12,7 @@ daemonize(const char *cmd)
 {
 	int					i, fd0, fd1, fd2;
 	pid_t				pid;
-	pid_t _pgid, _pid, _sid, _ppid;
+	pid_t _pid, _ppid, _pgid, _sid;
 	struct rlimit		rl;
 	struct sigaction	sa;
 
@@ -34,24 +34,28 @@ daemonize(const char *cmd)
 		err_quit("%s: can't fork", cmd);
 	else if (pid != 0) /* parent */
 		{
-			_pgid = getpgrp();
-			_ppid = getppid();
-			printf("1st parent, %s(),line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
 			_pid = getpid();
-			printf("1st parent, %s(),line=%d, _pid=%d, _ppid=%d\n", __func__, __LINE__, _pid, _ppid);
+			_ppid = getppid();
+			_pgid = getpgrp();
 			_sid = getsid(0);
-			printf("1st parent %s(),line=%d, _sid=%d\n", __func__, __LINE__, _sid);
+			printf("after 1st fork, parent, func=%s(),line=%d,_pid=%d, _ppid=%d, _pgid=%d, _sid=%d\n", 
+								__func__,__LINE__,_pid,    _ppid,     _pgid,    _sid);
 			exit(0);
 		}
-	printf("after 1st fork, first child, returned pid of fork=%d\n", pid);
-	_pgid = getpgrp();
-	_ppid = getppid();
-	printf("2nd parent, %s(), before setsid(), line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
+	printf("after 1st fork, child, returned pid of fork=%d\n", pid);
 	_pid = getpid();
-	printf("2nd parent, %s(), before setsid(), line=%d, _pid=%d, _ppid=%d\n", __func__, __LINE__, _pid, _ppid);
+	_ppid = getppid();
+	_pgid = getpgrp();
 	_sid = getsid(0);
-	printf("2nd parent, %s(), before setsid(),  line=%d, _sid=%d\n", __func__, __LINE__, _sid);
+	printf("after 1st fork, child, func=%s(),line=%d,_pid=%d, _ppid=%d, _pgid=%d, _sid=%d\n", 
+						__func__,__LINE__,_pid,    _ppid,     _pgid,    _sid);
 	setsid();
+	_pid = getpid();
+	_ppid = getppid();
+	_pgid = getpgrp();
+	_sid = getsid(0);
+	printf("after 1st fork, child, after setsid, func=%s(),line=%d,_pid=%d, _ppid=%d, _pgid=%d, _sid=%d\n", 
+						__func__,__LINE__,_pid,    _ppid,     _pgid,    _sid);
 	/*
 	 * Ensure future opens won't allocate controlling TTYs.
 	 */
@@ -64,24 +68,22 @@ daemonize(const char *cmd)
 	if ((pid = fork()) < 0)
 		err_quit("%s: can't fork", cmd);
 	else if (pid != 0) {/* parent */ 
-		_pgid = getpgrp();
-		_ppid = getppid();
-		printf("\n2nd parent, %s(), after setsid(),line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
+		printf("after 2nd fork, parent, returned pid of fork=%d\n", pid);
 		_pid = getpid();
-		printf("2nd parent, %s(), after setsid(),line=%d, _pid=%d, _ppid=%d\n", __func__, __LINE__, _pid, _ppid);
+		_ppid = getppid();
+		_pgid = getpgrp();
 		_sid = getsid(0);
-		printf("2nd parent, %s(), after setsid(),line=%d,  _sid=%d\n", __func__, __LINE__, _sid);
+		printf("after 2nd fork, parent, func=%s(),line=%d,_pid=%d, _ppid=%d, _pgid=%d, _sid=%d\n", 
+							__func__,__LINE__,_pid,    _ppid,     _pgid,    _sid);
 		exit(0);
 		
 		}
-
-	_pgid = getpgrp();
-	_ppid = getppid();
-	printf("2nd child, %s(),line=%d, _pgid=%d\n", __func__, __LINE__, _pgid);
 	_pid = getpid();
-	printf("2nd child, %s(),line=%d, _pid=%d, _ppid=%d\n", __func__, __LINE__, _pid, _ppid);
+	_ppid = getppid();
+	_pgid = getpgrp();
 	_sid = getsid(0);
-	printf("2nd child, %s(),line=%d, _sid=%d\n", __func__, __LINE__, _sid);
+	printf("after 2nd fork, child, func=%s(),line=%d,_pid=%d, _ppid=%d, _pgid=%d, _sid=%d\n", 
+						__func__,__LINE__,_pid,    _ppid,     _pgid,    _sid);
 	/*
 	 * Change the current working directory to the root so
 	 * we won't prevent file systems from being unmounted.
